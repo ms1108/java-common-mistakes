@@ -1,5 +1,5 @@
 package org.geekbang.time.commonmistakes.connectionpool.httpclient;
-
+//04 | 连接池：别让连接池帮了倒忙
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -23,8 +23,9 @@ public class HttpClientNotReuseController {
     private static CloseableHttpClient httpClient = null;
 
     static {
+        //当然，也可以把CloseableHttpClient定义为Bean，然后在@PreDestroy标记的方法内close
         httpClient = HttpClients.custom().setMaxConnPerRoute(1).setMaxConnTotal(1).evictIdleConnections(60, TimeUnit.SECONDS).build();
-
+        //关闭连接池
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             try {
                 httpClient.close();
